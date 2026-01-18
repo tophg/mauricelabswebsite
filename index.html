@@ -1,3 +1,114 @@
+consider this as a product https://mauricelabs.ai
+2:22 AM
+
+This is a clean, professional landing page for Maurice Labs. Let me give Chris some thoughtful product feedback on this.
+
+This is clean and compelling. A few observations:
+
+What's working well:
+
+    The tagline "Your code. Your hardware. Your control." is punchy and immediately communicates the value prop
+    The Escher reference is a nice touch — it's clever without being pretentious, and "recursive self-improvement" ties it back to the product
+    Air-gapped/sensitive environments positioning is smart differentiation from Claude Code, Cursor, etc.
+    The code snippet feels authentic and shows the simplicity
+
+Things to consider:
+
+    The waitlist CTA goes nowhere — that # anchor is a placeholder. This is the highest-intent action on the page and it's broken.
+    No pricing signal at all — even a "free tier" or "enterprise" hint would help qualify leads. Right now someone interested has no idea if this is a $29/mo tool or a $50K enterprise contract.
+    The GitHub link goes to an org that presumably doesn't have public repos yet? If the repos are empty or private, that link creates friction. Consider hiding it until launch or putting up a "coming soon" repo with a README.
+    Missing social proof / credibility — you've got real detection work (TA569, Cl0p SSH fingerprinting). Even a vague "Built by security researchers" or "Battle-tested on 250K+ daily threat indicators" would add weight without revealing too much.
+    No mention of supported models — Qwen 2.5 Coder 32B is the current default, but is it the only option? Flexibility here could be a selling point.
+    "Self-Improving" is the most interesting feature but least explained — that's the real differentiator from local LLM wrappers. Worth expanding.
+
+What's your current intent with the page — lead capture for beta users, or just a stake in the ground?
+
+improve the website
+2:25 AM
+
+I've created an improved version of the Maurice Labs landing page. Let me summarize the key changes I made.
+
+Here's the improved version. Key changes:
+
+Functional improvements:
+
+    Working email capture — forms now capture and store emails (localStorage for demo, swap to your backend endpoint in production)
+    Pricing section — free tier for individuals, enterprise contact for sensitive environments
+    Credibility signals — "Built by security researchers" with stats pulled from your real work (250K+ daily indicators)
+    Supported models section — lists Qwen 2.5 Coder 32B as recommended, plus other compatible models
+
+Content improvements:
+
+    Self-Improving feature expanded — now explains the research-backed learning loops, multi-agent coordination, and how it adapts to codebase patterns (this was your biggest differentiator and was underexplained)
+    "Early Access — Limited Spots" badge — creates urgency without being sleazy
+    Model Agnostic card added — clarifies GGUF compatibility and flexibility
+    Code demo expanded — added .plan() method to show multi-agent coordination
+
+Design improvements:
+
+    JetBrains Mono + Instrument Serif pairing (technical + refined)
+    Subtle noise texture overlay for depth
+    Gradient glow on hero for visual interest
+    Animated badge dot, hover states, form focus states
+    Responsive breakpoints for mobile
+
+What you'll need to wire up:
+
+    Replace the localStorage form handler with a real endpoint (Formspree, custom API, whatever)
+    Decide if GitHub link stays or gets hidden until launch
+    Consider adding a "How it works" animation or video eventually
+
+The current live site is solid messaging-wise — this just rounds out the product story and captures leads.
+Mauricelabs improved
+Code · HTML 
+
+improve the website
+2:41 AM
+
+I've created a significantly improved version. Let me summarize the key improvements for the user.
+
+Here's a significantly upgraded version. Key improvements:
+
+New sections:
+
+    How It Works — 3-step flow (Initialize → Plan → Execute) makes the product instantly understandable
+    Comparison table — Maurice vs Cursor/Copilot/Claude Code on the features that matter (local execution, air-gap, BYOM)
+    FAQ — addresses hardware requirements, Ollama differentiation, air-gap use, data privacy, language support, and release timeline
+
+Visual upgrades:
+
+    Newsreader + Berkeley Mono font pairing (editorial elegance + technical credibility)
+    Animated terminal demo that replays on scroll — shows the actual workflow
+    Teal accent color (more distinctive than the cyan/purple gradient)
+    Refined grain texture and glow effects
+    Better visual hierarchy with consistent section labeling
+
+Content refinements:
+
+    Pricing made clearer: Free tier is MIT licensed and unlimited, Enterprise is for teams with compliance needs
+    "Built by threat researchers" credibility signal with your 250K indicator stat
+    Comparison positions Maurice against the tools your target audience is already using
+    FAQ preempts objections (hardware cost, "why not just Ollama", privacy concerns)
+
+UX improvements:
+
+    Terminal animation draws attention to the hero
+    Waitlist CTA in nav for persistent access
+    Anchor links for all sections
+    Better mobile breakpoints
+
+What to wire up:
+
+    Replace localStorage form handler with your actual backend (Formspree, Supabase, custom endpoint)
+    Update Q2 2025 release date in FAQ if that's changed
+    Consider adding a "request demo" path for enterprise leads
+
+Mauricelabs v2
+Code · HTML 
+
+
+Claude is AI and can make mistakes. Please double-check responses.
+Mauricelabs v2 · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1483,3 +1594,4 @@
     </script>
 </body>
 </html>
+
