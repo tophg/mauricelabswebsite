@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maurice Labs — Local-First Agentic AI</title>
+    <meta name="description" content="Maurice is a local-first agentic coding framework. Your code, your hardware, your control.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --text-primary: #f5f5f4;
+            --text-secondary: #a1a1aa;
+            --accent: #e4e4d9;
+            --accent-dim: #52524e;
+            --border: #27272a;
+            --glow: rgba(228, 228, 217, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Escher-inspired animated background */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .bg-pattern svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .impossible-shape {
+            animation: rotate-subtle 60s linear infinite;
+            transform-origin: center;
+        }
+
+        .impossible-shape:nth-child(2) {
+            animation-duration: 80s;
+            animation-direction: reverse;
+        }
+
+        .impossible-shape:nth-child(3) {
+            animation-duration: 100s;
+        }
+
+        @keyframes rotate-subtle {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Grain overlay */
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        /* Main content */
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            border: 1.5px solid var(--accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 8rem 0 6rem;
+            max-width: 800px;
+        }
+
+        .hero-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .hero-label::before {
+            content: '';
+            width: 24px;
+            height: 1px;
+            background: var(--accent-dim);
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 400;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-description {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 540px;
+            margin-bottom: 3rem;
+            line-height: 1.7;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.75rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.875rem;
+            text-decoration: none;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .btn-primary {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border-color: var(--text-primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .btn-secondary {
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--glow);
+            border-color: var(--accent-dim);
+        }
+
+        .btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Features grid */
+        .features {
+            padding: 6rem 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .section-header {
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            padding: 2.5rem;
+            transition: background 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: var(--bg-secondary);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 1.5rem;
+            color: var(--accent);
+        }
+
+        .feature-card h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Code showcase */
+        .showcase {
+            padding: 6rem 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .code-window {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            max-width: 700px;
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+
+        .code-dot:first-child { background: #ff5f57; }
+        .code-dot:nth-child(2) { background: #ffbd2e; }
+        .code-dot:nth-child(3) { background: #28ca42; }
+
+        .code-body {
+            padding: 1.5rem;
+            font-size: 0.875rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .code-body .comment { color: var(--accent-dim); }
+        .code-body .keyword { color: #c792ea; }
+        .code-body .string { color: #c3e88d; }
+        .code-body .function { color: #82aaff; }
+
+        /* Philosophy */
+        .philosophy {
+            padding: 6rem 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .philosophy-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .philosophy blockquote {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.75rem;
+            font-style: italic;
+            line-height: 1.4;
+            color: var(--accent);
+            border-left: 2px solid var(--accent-dim);
+            padding-left: 1.5rem;
+        }
+
+        .philosophy-text {
+            font-size: 0.9375rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .philosophy-text p + p {
+            margin-top: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 5rem 0 4rem;
+            }
+
+            .philosophy-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fade-up {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-label, .hero h1, .hero-description, .cta-group {
+            animation: fade-up 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .hero h1 { animation-delay: 0.1s; }
+        .hero-description { animation-delay: 0.2s; }
+        .cta-group { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <!-- Animated background pattern -->
+    <div class="bg-pattern">
+        <svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice">
+            <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#27272a;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#0a0a0b;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <g class="impossible-shape" opacity="0.3">
+                <polygon points="500,100 900,300 900,700 500,900 100,700 100,300" fill="none" stroke="#27272a" stroke-width="1"/>
+                <polygon points="500,200 800,350 800,650 500,800 200,650 200,350" fill="none" stroke="#27272a" stroke-width="1"/>
+                <polygon points="500,300 700,400 700,600 500,700 300,600 300,400" fill="none" stroke="#27272a" stroke-width="1"/>
+            </g>
+            <g class="impossible-shape" opacity="0.2">
+                <line x1="500" y1="100" x2="500" y2="300" stroke="#3f3f46" stroke-width="0.5"/>
+                <line x1="900" y1="300" x2="700" y2="400" stroke="#3f3f46" stroke-width="0.5"/>
+                <line x1="900" y1="700" x2="700" y2="600" stroke="#3f3f46" stroke-width="0.5"/>
+                <line x1="500" y1="900" x2="500" y2="700" stroke="#3f3f46" stroke-width="0.5"/>
+                <line x1="100" y1="700" x2="300" y2="600" stroke="#3f3f46" stroke-width="0.5"/>
+                <line x1="100" y1="300" x2="300" y2="400" stroke="#3f3f46" stroke-width="0.5"/>
+            </g>
+            <g class="impossible-shape" opacity="0.15">
+                <circle cx="500" cy="500" r="300" fill="none" stroke="#3f3f46" stroke-width="0.5"/>
+                <circle cx="500" cy="500" r="250" fill="none" stroke="#3f3f46" stroke-width="0.5"/>
+                <circle cx="500" cy="500" r="200" fill="none" stroke="#3f3f46" stroke-width="0.5"/>
+            </g>
+        </svg>
+    </div>
+
+    <div class="grain"></div>
+
+    <div class="container">
+        <nav>
+            <a href="/" class="logo">
+                <span class="logo-mark">M</span>
+                Maurice Labs
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#philosophy">Philosophy</a></li>
+                <li><a href="https://github.com/mauricelabs" target="_blank">GitHub</a></li>
+            </ul>
+        </nav>
+
+        <section class="hero">
+            <p class="hero-label">Local-First Agentic AI</p>
+            <h1>Your code.<br>Your hardware.<br>Your <em>control</em>.</h1>
+            <p class="hero-description">
+                Maurice is a local-first agentic coding framework. Run sophisticated AI agents entirely on your own infrastructure — no API calls, no data leaving your machine.
+            </p>
+            <div class="cta-group">
+                <a href="#" class="btn btn-primary">
+                    Join Waitlist
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                </a>
+                <a href="https://github.com/mauricelabs" class="btn btn-secondary" target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    View on GitHub
+                </a>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="section-header">
+                <p class="section-label">Capabilities</p>
+                <h2 class="section-title">Built for serious work</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    </svg>
+                    <h3>Fully Local</h3>
+                    <p>Runs entirely on your hardware using quantized models. No API keys, no cloud dependencies, no data exfiltration.</p>
+                </div>
+                <div class="feature-card">
+                    <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+                    </svg>
+                    <h3>Agentic Coding</h3>
+                    <p>Multi-agent coordination for complex projects. Maurice doesn't just complete code — it architects, refactors, and ships.</p>
+                </div>
+                <div class="feature-card">
+                    <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
+                    </svg>
+                    <h3>Self-Improving</h3>
+                    <p>Research-backed learning loops. Maurice gets better at your codebase the more you work together.</p>
+                </div>
+                <div class="feature-card">
+                    <svg class="feature-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                    </svg>
+                    <h3>Air-Gapped Ready</h3>
+                    <p>Perfect for sensitive environments. Run in isolated networks with zero external connectivity required.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="showcase">
+            <div class="section-header">
+                <p class="section-label">In Action</p>
+                <h2 class="section-title">Simple interface, powerful execution</h2>
+            </div>
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="code-dot"></span>
+                    <span class="code-dot"></span>
+                    <span class="code-dot"></span>
+                </div>
+                <div class="code-body">
+                    <span class="comment"># Initialize Maurice with your local model</span><br>
+                    <span class="keyword">from</span> maurice <span class="keyword">import</span> Agent<br><br>
+                    <span class="comment"># Create an agent with full codebase context</span><br>
+                    agent = Agent(<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;model=<span class="string">"qwen2.5-coder-32b"</span>,<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;workspace=<span class="string">"./my-project"</span><br>
+                    )<br><br>
+                    <span class="comment"># Let Maurice handle complex tasks</span><br>
+                    agent.<span class="function">execute</span>(<span class="string">"Refactor auth module to use JWT"</span>)
+                </div>
+            </div>
+        </section>
+
+        <section class="philosophy" id="philosophy">
+            <div class="section-header">
+                <p class="section-label">Philosophy</p>
+                <h2 class="section-title">Why local matters</h2>
+            </div>
+            <div class="philosophy-content">
+                <blockquote>
+                    "The best AI assistant is one that respects the boundaries of your machine — and your mind."
+                </blockquote>
+                <div class="philosophy-text">
+                    <p>Every line of code you write carries context — your architecture decisions, your team's conventions, your business logic. That context shouldn't leave your control.</p>
+                    <p>Maurice was built on a simple premise: powerful AI coding assistance shouldn't require trusting a third party with your intellectual property. Run it on your hardware. Keep your data where it belongs.</p>
+                    <p>Named for Maurits Cornelis Escher — the artist who found infinite complexity in simple rules — Maurice embraces recursive self-improvement and elegant problem decomposition.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <p class="footer-text">© 2025 Maurice Labs. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="https://github.com/mauricelabs" target="_blank">GitHub</a>
+                    <a href="mailto:hello@mauricelabs.ai">Contact</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
