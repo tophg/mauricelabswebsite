@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maurice Labs — Local-First Agentic AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #111113;
+            --bg-tertiary: #18181b;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #22d3ee;
+            --accent-dim: #0891b2;
+            --border: #27272a;
+            --border-light: #3f3f46;
+            --gradient-1: #06b6d4;
+            --gradient-2: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 11, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8rem 3rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hero h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 400;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 580px;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Waitlist Form */
+        .waitlist-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        .waitlist-form input {
+            flex: 1;
+            max-width: 320px;
+            padding: 1rem 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .waitlist-form input:focus {
+            outline: none;
+            border-color: var(--accent-dim);
+            box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.1);
+        }
+
+        .waitlist-form input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-primary {
+            padding: 1rem 2rem;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .form-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .form-success {
+            display: none;
+            padding: 1rem 1.5rem;
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid var(--accent-dim);
+            border-radius: 8px;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+
+        /* Trust Indicators */
+        .trust-section {
+            padding: 4rem 3rem;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-secondary);
+        }
+
+        .trust-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .trust-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .trust-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+        }
+
+        .stat {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.5rem;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 8rem 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            margin-bottom: 4rem;
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            letter-spacing: -0.02em;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            padding: 2.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: var(--border-light);
+            transform: translateY(-4px);
+        }
+
+        .feature-card.featured {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border-color: var(--border-light);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.01em;
+        }
+
+        .feature-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .feature-card.featured p {
+            max-width: 600px;
+        }
+
+        /* Models Section */
+        .models {
+            padding: 6rem 3rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .models-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .models-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .model-tag {
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .model-tag:hover {
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .model-tag.primary {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-color: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        .models-note {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Code Demo */
+        .demo {
+            padding: 8rem 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .code-window {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            padding: 1rem 1.5rem;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-light);
+        }
+
+        .code-dot:nth-child(1) { background: #ef4444; }
+        .code-dot:nth-child(2) { background: #eab308; }
+        .code-dot:nth-child(3) { background: #22c55e; }
+
+        .code-content {
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+        }
+
+        .code-comment { color: var(--text-muted); }
+        .code-keyword { color: #c084fc; }
+        .code-string { color: #4ade80; }
+        .code-function { color: var(--accent); }
+
+        .demo-text h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .demo-text p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+
+        /* Pricing Hint */
+        .pricing {
+            padding: 6rem 3rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+        }
+
+        .pricing-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .pricing-tiers {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .tier {
+            padding: 2.5rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            text-align: left;
+        }
+
+        .tier-name {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .tier-price {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .tier-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .tier.enterprise {
+            border-color: var(--accent-dim);
+        }
+
+        .tier.enterprise .tier-name {
+            color: var(--accent);
+        }
+
+        /* Philosophy */
+        .philosophy {
+            padding: 8rem 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .philosophy blockquote {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-style: italic;
+            line-height: 1.5;
+            color: var(--text-primary);
+            border-left: 2px solid var(--accent);
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .philosophy p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .philosophy .attribution {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* CTA */
+        .cta {
+            padding: 8rem 3rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            border-top: 1px solid var(--border);
+        }
+
+        .cta h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .cta p {
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta .waitlist-form {
+            justify-content: center;
+        }
+
+        /* Footer */
+        footer {
+            padding: 3rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero, .features, .demo, .philosophy {
+                padding: 6rem 1.5rem;
+            }
+
+            .trust-section, .models, .pricing, .cta {
+                padding: 4rem 1.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-card.featured {
+                grid-column: span 1;
+            }
+
+            .demo-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .pricing-tiers {
+                grid-template-columns: 1fr;
+            }
+
+            .waitlist-form {
+                flex-direction: column;
+            }
+
+            .waitlist-form input {
+                max-width: none;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">
+            <div class="logo-mark">M</div>
+            Maurice Labs
+        </a>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#models">Models</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#philosophy">Philosophy</a></li>
+            <li><a href="mailto:hello@mauricelabs.ai">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                Early Access — Limited Spots
+            </div>
+            <h1>Your code. Your hardware.<br>Your <em>control</em>.</h1>
+            <p class="hero-subtitle">
+                Maurice is a local-first agentic coding framework. Run sophisticated AI agents entirely on your own infrastructure — no API calls, no data leaving your machine, no compromises.
+            </p>
+            <form class="waitlist-form" id="waitlist-hero">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit" class="btn-primary">Join Waitlist</button>
+            </form>
+            <p class="form-note">No spam. We'll notify you when early access opens.</p>
+            <div class="form-success" id="success-hero">
+                ✓ You're on the list. We'll be in touch soon.
+            </div>
+        </div>
+    </section>
+
+    <section class="trust-section">
+        <div class="trust-content">
+            <p class="trust-label">Built by security researchers</p>
+            <div class="trust-stats">
+                <div class="stat">
+                    <span class="stat-value">250K+</span>
+                    <span class="stat-label">Daily threat indicators processed in production environments</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">100%</span>
+                    <span class="stat-label">Local execution — your code never touches external servers</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">Zero</span>
+                    <span class="stat-label">API keys or cloud dependencies required</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="section-header">
+            <p class="section-label">Capabilities</p>
+            <h2 class="section-title">Built for serious work</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card featured">
+                <div class="feature-icon">🧠</div>
+                <h3>Self-Improving Intelligence</h3>
+                <p>
+                    Maurice implements research-backed learning loops that adapt to your codebase over time. 
+                    Multi-agent coordination decomposes complex tasks into specialized subtasks, while 
+                    continuous feedback integration means the system genuinely improves with use — not just 
+                    caches responses. Your architectural decisions, naming conventions, and team patterns 
+                    become part of Maurice's working knowledge.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Fully Local Execution</h3>
+                <p>
+                    Runs entirely on your hardware using quantized models optimized for consumer GPUs. 
+                    No API keys, no cloud dependencies, no telemetry. Your intellectual property stays yours.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Agentic Coding</h3>
+                <p>
+                    Multi-agent coordination for complex projects. Maurice doesn't just complete code — 
+                    it architects, refactors, tests, and ships entire features autonomously.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Air-Gapped Ready</h3>
+                <p>
+                    Perfect for classified environments, financial institutions, and anywhere data sovereignty 
+                    matters. Run in fully isolated networks with zero external connectivity.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔧</div>
+                <h3>Model Agnostic</h3>
+                <p>
+                    Bring your own models. Maurice works with any GGUF-quantized model, letting you 
+                    balance capability against hardware constraints.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="models" id="models">
+        <div class="models-content">
+            <div class="section-header">
+                <p class="section-label">Supported Models</p>
+                <h2 class="section-title">Flexible by design</h2>
+            </div>
+            <div class="models-grid">
+                <span class="model-tag primary">Qwen 2.5 Coder 32B</span>
+                <span class="model-tag">DeepSeek Coder V2</span>
+                <span class="model-tag">CodeLlama 34B</span>
+                <span class="model-tag">Mistral Large</span>
+                <span class="model-tag">Llama 3.1 70B</span>
+                <span class="model-tag">Any GGUF model</span>
+            </div>
+            <p class="models-note">
+                Recommended: Qwen 2.5 Coder 32B (Q4_K_M) — optimal balance of capability and VRAM usage for most systems.
+            </p>
+        </div>
+    </section>
+
+    <section class="demo">
+        <div class="demo-container">
+            <div class="code-window">
+                <div class="code-header">
+                    <span class="code-dot"></span>
+                    <span class="code-dot"></span>
+                    <span class="code-dot"></span>
+                </div>
+                <div class="code-content">
+<pre><span class="code-comment"># Initialize Maurice with your local model</span>
+<span class="code-keyword">from</span> maurice <span class="code-keyword">import</span> Agent
+
+<span class="code-comment"># Create an agent with full codebase context</span>
+agent = <span class="code-function">Agent</span>(
+    model=<span class="code-string">"qwen2.5-coder-32b"</span>,
+    workspace=<span class="code-string">"./my-project"</span>
+)
+
+<span class="code-comment"># Let Maurice handle complex tasks</span>
+agent.<span class="code-function">execute</span>(<span class="code-string">"Refactor auth module to use JWT"</span>)
+
+<span class="code-comment"># Or coordinate multiple agents</span>
+agent.<span class="code-function">plan</span>(<span class="code-string">"Add OAuth2 support with full test coverage"</span>)</pre>
+                </div>
+            </div>
+            <div class="demo-text">
+                <h3>Simple interface,<br>powerful execution</h3>
+                <p>
+                    Initialize with a single command. Maurice indexes your codebase, understands your 
+                    architecture, and executes complex multi-step tasks with full context awareness.
+                </p>
+                <p>
+                    The agent decomposes large requests into subtasks, coordinates parallel execution 
+                    where possible, and synthesizes results into coherent changes — all running locally 
+                    on your machine.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <div class="pricing-content">
+            <div class="section-header">
+                <p class="section-label">Pricing</p>
+                <h2 class="section-title">Simple, transparent pricing</h2>
+            </div>
+            <div class="pricing-tiers">
+                <div class="tier">
+                    <p class="tier-name">Individual</p>
+                    <p class="tier-price">Free</p>
+                    <p class="tier-desc">
+                        Full framework access for personal projects. Community support. 
+                        MIT licensed core.
+                    </p>
+                </div>
+                <div class="tier enterprise">
+                    <p class="tier-name">Enterprise</p>
+                    <p class="tier-price">Contact us</p>
+                    <p class="tier-desc">
+                        Priority support, custom integrations, team features, and 
+                        deployment assistance for sensitive environments.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="philosophy" id="philosophy">
+        <div class="section-header">
+            <p class="section-label">Philosophy</p>
+            <h2 class="section-title">Why local matters</h2>
+        </div>
+        <blockquote>
+            "The best AI assistant is one that respects the boundaries of your machine — and your mind."
+        </blockquote>
+        <p>
+            Every line of code you write carries context — your architecture decisions, your team's 
+            conventions, your business logic. That context is valuable. It shouldn't leave your control.
+        </p>
+        <p>
+            Maurice was built on a simple premise: powerful AI coding assistance shouldn't require 
+            trusting a third party with your intellectual property. Run it on your hardware. Keep 
+            your data where it belongs.
+        </p>
+        <p class="attribution">
+            Named for Maurits Cornelis Escher — the artist who found infinite complexity in simple rules — 
+            Maurice embraces recursive self-improvement and elegant problem decomposition.
+        </p>
+    </section>
+
+    <section class="cta">
+        <h2>Ready to take control?</h2>
+        <p>Join the waitlist for early access. Be the first to run agentic AI on your own terms.</p>
+        <form class="waitlist-form" id="waitlist-footer">
+            <input type="email" placeholder="Enter your email" required>
+            <button type="submit" class="btn-primary">Join Waitlist</button>
+        </form>
+        <div class="form-success" id="success-footer">
+            ✓ You're on the list. We'll be in touch soon.
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-left">
+            © 2025 Maurice Labs. All rights reserved.
+        </div>
+        <div class="footer-links">
+            <a href="mailto:hello@mauricelabs.ai">Contact</a>
+            <a href="https://github.com/mauricelabs">GitHub</a>
+        </div>
+    </footer>
+
+    <script>
+        // Waitlist form handling
+        document.querySelectorAll('.waitlist-form').forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = form.querySelector('input').value;
+                const formId = form.id;
+                
+                // In production, this would POST to your backend
+                // For now, simulate success and store locally
+                console.log('Waitlist signup:', email);
+                
+                // Store in localStorage for demo purposes
+                const waitlist = JSON.parse(localStorage.getItem('maurice-waitlist') || '[]');
+                if (!waitlist.includes(email)) {
+                    waitlist.push(email);
+                    localStorage.setItem('maurice-waitlist', JSON.stringify(waitlist));
+                }
+                
+                // Show success state
+                form.style.display = 'none';
+                const successId = formId.replace('waitlist', 'success');
+                document.getElementById(successId).style.display = 'block';
+            });
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
